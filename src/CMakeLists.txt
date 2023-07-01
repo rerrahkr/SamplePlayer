@@ -1,7 +1,12 @@
 target_sources(sampleplayer
     PRIVATE
         PluginEditor.cpp
-        PluginProcessor.cpp)
+        PluginProcessor.cpp
+        ui/ExportSettingsView.cpp
+        ui/NestableGrid.cpp
+        ui/SampleListModel.cpp
+        ui/SampleListView.cpp
+        ui/SamplingRateTextEditor.cpp)
 
 # target_include_directories(sampleplayer PUBLIC ${PROJECT_SOURCE_DIR}/include)
 

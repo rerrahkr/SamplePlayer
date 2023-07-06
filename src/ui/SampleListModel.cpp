@@ -1,13 +1,9 @@
 #include "SampleListModel.h"
 
+#include "../Model.h"
+
 namespace ui {
 namespace {
-juce::StringArray kData = {
-    "ABC",
-    "DEF",
-    "GHI",
-};
-
 /// Definitions for visual design
 namespace visual {
 /// Colour definitions
@@ -36,11 +32,14 @@ constexpr int fontSize = 14;
 }  // namespace visual
 }  // namespace
 
-SampleListModel::SampleListModel() {}
+SampleListModel::SampleListModel(const SampleListState& model)
+    : model_(model) {}
 
 SampleListModel::~SampleListModel() {}
 
-int SampleListModel::getNumRows() { return kData.size(); }
+int SampleListModel::getNumRows() {
+  return static_cast<int>(model_.samples().size());
+}
 
 void SampleListModel::paintRowBackground(juce::Graphics& g, int rowNumber,
                                          int /*width*/, int /*height*/,
@@ -65,7 +64,7 @@ void SampleListModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
       break;
 
     case SampleListColumn::ColumnName:
-      text = kData[rowNumber];
+      text = model_.samples()[rowNumber].name;
       break;
 
     default:
@@ -76,5 +75,17 @@ void SampleListModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
 
   g.setColour(visual::colour::kBackground);
   g.fillRect(width - 1, 0, 1, height);
+}
+
+void SampleListModel::selectedRowsChanged(int /*lastRowSelected*/) {
+  if (onSelctionsChanged) {
+    onSelctionsChanged();
+  }
+}
+
+void SampleListModel::deleteKeyPressed(int /*lastRowSelected*/) {
+  if (onDeleteKeyPressed) {
+    onDeleteKeyPressed();
+  }
 }
 }  // namespace ui

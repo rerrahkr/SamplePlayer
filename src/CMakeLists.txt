@@ -1,5 +1,7 @@
 target_sources(sampleplayer
     PRIVATE
+        Controller.cpp
+        Model.cpp
         PluginEditor.cpp
         PluginProcessor.cpp
         ui/ExportSettingsView.cpp

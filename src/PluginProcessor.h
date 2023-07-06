@@ -2,6 +2,11 @@
 
 #include <JuceHeader.h>
 
+#include <memory>
+
+class Controller;
+class Model;
+
 //==============================================================================
 class PluginProcessor : public juce::AudioProcessor {
  public:
@@ -43,5 +48,8 @@ class PluginProcessor : public juce::AudioProcessor {
 
  private:
   //==============================================================================
+  std::shared_ptr<Model> model_;
+  std::shared_ptr<Controller> controller_;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginProcessor)
 };

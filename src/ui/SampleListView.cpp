@@ -18,6 +18,8 @@ SampleListView::SampleListView(const juce::String& componentName,
   setColour(juce::TableListBox::outlineColourId, visual::colour::kOutline);
   setOutlineThickness(1);
 
+  setMultipleSelectionEnabled(true);
+
   const auto columnFlags = juce::TableHeaderComponent::visible;
 
   auto& tableHeader = getHeader();

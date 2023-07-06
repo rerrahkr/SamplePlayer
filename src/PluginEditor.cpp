@@ -1,22 +1,40 @@
 #include "PluginEditor.h"
 
+#include "./ui/CustomMessage.h"
 #include "./ui/ExportSettingsView.h"
 #include "./ui/NestableGrid.h"
 #include "./ui/SampleListModel.h"
 #include "./ui/SampleListView.h"
+#include "Controller.h"
+#include "Model.h"
 #include "PluginProcessor.h"
 
 //==============================================================================
-PluginEditor::PluginEditor(PluginProcessor& p)
+PluginEditor::PluginEditor(PluginProcessor& p, Controller& controller,
+                           const EditorState& model)
     : AudioProcessorEditor(&p),
       processorRef(p),
+      controller_(controller),
+      model_(model),
       currentDirectory_(
           juce::File::getSpecialLocation(juce::File::currentApplicationFile)) {
-  sampleListModel_ = std::make_unique<ui::SampleListModel>();
+  // Sample list
+  sampleListModel_ = std::make_unique<ui::SampleListModel>(model);
+  sampleListModel_->onSelctionsChanged = [this] {
+    if (sampleListView_) {
+      controller_.postMessage(new ui::SelectedSampleChangedMessage{
+          sampleListView_->getSelectedRow()});
+    }
+  };
+  sampleListModel_->onDeleteKeyPressed = [this] {
+    controller_.postMessage(new ui::DeleteSelectedSampleMessage);
+  };
+
   sampleListView_ = std::make_unique<ui::SampleListView>(
       "sampleList", sampleListModel_.get());
   addAndMakeVisible(sampleListView_.get());
 
+  // Name
   nameLabel_ = std::make_unique<juce::Label>();
   nameLabel_->setText("Name", juce::dontSendNotification);
   nameLabel_->setJustificationType(juce::Justification::centredLeft);
@@ -28,6 +46,7 @@ PluginEditor::PluginEditor(PluginProcessor& p)
   nameTextEditor_->setText("Bass Drum 1");
   addAndMakeVisible(nameTextEditor_.get());
 
+  // Detail view
   detailView_ = std::make_unique<juce::TextEditor>();
   detailView_->setReadOnly(true);
   detailView_->setMultiLine(true);
@@ -41,6 +60,7 @@ Start offset: 0x100
 Data length: 0x1284)");
   addAndMakeVisible(detailView_.get());
 
+  // Buttons
   playButton_ = std::make_unique<juce::TextButton>("Play");
   playButton_->onClick = [] {};
   addAndMakeVisible(playButton_.get());
@@ -57,10 +77,15 @@ Data length: 0x1284)");
   exportButton_->onClick = [this] { onExportButtonClicked(); };
   addAndMakeVisible(exportButton_.get());
 
+  //
   setSize(400, 300);
+  resized();
 }
 
-PluginEditor::~PluginEditor() { sampleListView_->setModel(nullptr); }
+PluginEditor::~PluginEditor() {
+  controller_.postMessage(new ui::DestructMessage{});
+  sampleListView_->setModel(nullptr);
+}
 
 //==============================================================================
 void PluginEditor::paint(juce::Graphics& g) {
@@ -118,6 +143,26 @@ void PluginEditor::resized() {
       buttonWidth * 2 + static_cast<int>(gridGap.pixels)));
 }
 
+void PluginEditor::actionListenerCallback(const juce::String& /*message*/) {
+  sampleListView_->updateContent();
+
+  const auto sampleIndex = model_.selectedSampleIndex();
+  if (sampleIndex.has_value()) {
+    // Selected any sample.
+    const auto index = static_cast<int>(sampleIndex.value());
+    sampleListView_->selectRow(index);
+    const auto sample = model_.samples()[index];
+    nameLabel_->setText(sample.name, juce::dontSendNotification);
+    detailView_->setText(sample.details, false);
+  } else {
+    // Deselected sample.
+    constexpr int kDeselectedIndex{-1};
+    sampleListView_->selectRow(kDeselectedIndex);
+    nameLabel_->setText("", juce::dontSendNotification);
+    detailView_->setText("", false);
+  }
+}
+
 void PluginEditor::onImportButtonClicked() {
   static const juce::String filterString = "*";
 
@@ -169,6 +214,7 @@ void PluginEditor::onExportButtonClicked() {
       fileChooser_ = std::make_unique<juce::FileChooser>(
           "Export", currentDirectory_, filterString, true, false, this);
       fileChooser_->launchAsync(chooserFlags, callback);
+      controller_.postMessage(new ui::CustomMessage{});
     };
   }
 

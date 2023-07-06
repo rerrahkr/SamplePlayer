@@ -1,5 +1,7 @@
 #include "PluginProcessor.h"
 
+#include "Controller.h"
+#include "Model.h"
 #include "PluginEditor.h"
 
 //==============================================================================
@@ -13,6 +15,8 @@ PluginProcessor::PluginProcessor()
               .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
       ) {
+  model_ = std::make_shared<Model>();
+  controller_ = std::make_shared<Controller>(model_);
 }
 
 PluginProcessor::~PluginProcessor() {}
@@ -139,7 +143,9 @@ bool PluginProcessor::hasEditor() const {
 }
 
 juce::AudioProcessorEditor* PluginProcessor::createEditor() {
-  return new PluginEditor(*this);
+  auto* editor = new PluginEditor(*this, *controller_, *model_);
+  model_->addActionListener(editor);
+  return editor;
 }
 
 //==============================================================================

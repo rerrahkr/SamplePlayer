@@ -5,12 +5,7 @@
 #include <optional>
 #include <vector>
 
-// TODO: Dummy
-struct DummySample {
-  juce::String name, details;
-};
-
-using Samples = std::vector<DummySample>;
+#include "sample/Sample.h"
 
 /**
  * @brief Interface of sample list model.
@@ -32,7 +27,9 @@ struct SampleListState {
 /**
  * @brief Interface of plugin editor model.
  */
-struct EditorState : public SampleListState {};
+struct EditorState : public SampleListState {
+  virtual juce::StringArray importableExtensions() const = 0;
+};
 
 /**
  * @brief Model class.
@@ -74,6 +71,10 @@ class Model : public juce::ActionBroadcaster, public EditorState {
    * @return \c true if specified sample is deleted, otherwise \c false.
    */
   bool deleteSample(std::size_t index);
+
+  juce::StringArray importableExtensions() const;
+
+  bool importSamples(const juce::File& file);
 
  private:
   /// Sample list state

@@ -29,5 +29,9 @@ void Controller::handleMessage(const juce::Message& message) {
     if (index.has_value()) {
       model->deleteSample(index.value());
     }
+  } else if (const auto* sampleImportRequestedMessage =
+                 dynamic_cast<const ui::SampleImportRequestedMessage*>(
+                     &message)) {
+    model->importSamples(sampleImportRequestedMessage->file);
   }
 }

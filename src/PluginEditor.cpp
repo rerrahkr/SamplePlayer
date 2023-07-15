@@ -182,6 +182,8 @@ void PluginEditor::onImportButtonClicked() {
         return;
       }
 
+      controller_.postMessage(new ui::SampleImportRequestedMessage(file));
+
       currentDirectory_ = file.getParentDirectory();
     }
   };

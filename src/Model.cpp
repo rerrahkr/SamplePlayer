@@ -1,12 +1,8 @@
 #include "Model.h"
 
-Model::Model() {
-  samples_ = {
-      {"ABC", "abc"},
-      {"DEF", "def"},
-      {"GHI", "ghi"},
-  };
-}
+#include "file/P86.h"
+
+Model::Model() {}
 
 Samples Model::samples() const { return samples_; }
 
@@ -34,4 +30,23 @@ bool Model::deleteSample(std::size_t index) {
   samples_.erase(samples_.begin() + index);
   sendActionMessage("");
   return true;
+}
+
+juce::StringArray Model::importableExtensions() const { return {".p86"}; }
+
+bool Model::importSamples(const juce::File& file) {
+  if (file.getFileExtension().toLowerCase() == ".p86") {
+    auto importeds = file::P86(file).samples();
+    if (importeds.empty()) {
+      return false;
+    }
+
+    samples_.reserve(samples_.size() + importeds.size());
+    std::move(importeds.begin(), importeds.end(), std::back_inserter(samples_));
+
+    sendActionMessage("");
+    return true;
+  }
+
+  return false;
 }

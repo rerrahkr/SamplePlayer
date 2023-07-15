@@ -16,6 +16,12 @@ struct SelectedSampleChangedMessage : public juce::Message {
 /// @brief Message to delete selected samples.
 struct DeleteSelectedSampleMessage : public juce::Message {};
 
+struct SampleImportRequestedMessage : public juce::Message {
+  const juce::File file;
+
+  SampleImportRequestedMessage(const juce::File& file) : file(file) {}
+};
+
 /// @brief Message that the view is destructing.
 struct DestructMessage : public juce::Message {};
 }  // namespace ui

@@ -42,6 +42,11 @@ target_link_libraries(${PROJECT_NAME}
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
 
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        lib/adpcm)
+
+
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.

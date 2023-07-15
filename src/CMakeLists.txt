@@ -4,6 +4,8 @@ target_sources(${PROJECT_NAME}
         Model.cpp
         PluginEditor.cpp
         PluginProcessor.cpp
+        file/P86.cpp
+        sample/Sample.cpp
         ui/ExportSettingsView.cpp
         ui/NestableGrid.cpp
         ui/SampleListModel.cpp

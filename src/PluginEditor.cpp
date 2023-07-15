@@ -79,6 +79,7 @@ Data length: 0x1284)");
 
   exportButton_ = std::make_unique<juce::TextButton>("Export");
   exportButton_->onClick = [this] { onExportButtonClicked(); };
+  exportButton_->setEnabled(false);
   addAndMakeVisible(exportButton_.get());
 
   //
@@ -156,13 +157,13 @@ void PluginEditor::actionListenerCallback(const juce::String& /*message*/) {
     const auto index = static_cast<int>(sampleIndex.value());
     sampleListView_->selectRow(index);
     const auto sample = model_.samples()[index];
-    nameLabel_->setText(sample.name, juce::dontSendNotification);
+    nameTextEditor_->setText(sample.name, juce::dontSendNotification);
     detailView_->setText(sample.details, false);
   } else {
     // Deselected sample.
     constexpr int kDeselectedIndex{-1};
     sampleListView_->selectRow(kDeselectedIndex);
-    nameLabel_->setText("", juce::dontSendNotification);
+    nameTextEditor_->setText("", juce::dontSendNotification);
     detailView_->setText("", false);
   }
 }

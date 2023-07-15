@@ -18,6 +18,8 @@ struct DeleteSelectedSampleMessage : public juce::Message {};
 
 struct PlayButtonClickedMessage : public juce::Message {};
 
+struct StopButtonClickedMessge : public juce::Message {};
+
 struct SampleImportRequestedMessage : public juce::Message {
   const juce::File file;
 

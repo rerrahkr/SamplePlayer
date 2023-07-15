@@ -68,7 +68,9 @@ Data length: 0x1284)");
   addAndMakeVisible(playButton_.get());
 
   stopButton_ = std::make_unique<juce::TextButton>("Stop");
-  stopButton_->onClick = [] {};
+  stopButton_->onClick = [this] {
+    controller_.postMessage(new ui::StopButtonClickedMessge);
+  };
   addAndMakeVisible(stopButton_.get());
 
   importButton_ = std::make_unique<juce::TextButton>("Import");

@@ -43,5 +43,8 @@ void Controller::handleMessage(const juce::Message& message) {
     }
 
     processor_.loadSample(model->samples()[index.value()]);
+  } else if (const auto* stopButtonClickedMessage =
+                 dynamic_cast<const ui::StopButtonClickedMessge*>(&message)) {
+    processor_.loadSample(sample::Sample());
   }
 }

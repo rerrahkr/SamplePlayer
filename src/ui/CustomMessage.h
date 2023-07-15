@@ -16,6 +16,8 @@ struct SelectedSampleChangedMessage : public juce::Message {
 /// @brief Message to delete selected samples.
 struct DeleteSelectedSampleMessage : public juce::Message {};
 
+struct PlayButtonClickedMessage : public juce::Message {};
+
 struct SampleImportRequestedMessage : public juce::Message {
   const juce::File file;
 

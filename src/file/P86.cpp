@@ -91,7 +91,7 @@ Samples P86::samples() const {
   for (auto [index, rawSample] : raws_) {
     juce::Array<float> sample;
     for (auto data : rawSample) {
-      sample.add(static_cast<float>(data));
+      sample.add(static_cast<float>(data) * 1e-2f);
     }
 
     const juce::String name(index);

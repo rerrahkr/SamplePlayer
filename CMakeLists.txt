@@ -18,8 +18,8 @@ add_subdirectory(lib/juce)
 juce_add_plugin(${PROJECT_NAME}
     COMPANY_NAME "Rerrah"
     COMPANY_COPYRIGHT "Rerrah"
-    #IS_SYNTH TRUE
-    #IS_MIDI_EFFECT FALSE
+    IS_SYNTH TRUE
+    IS_MIDI_EFFECT FALSE
     #PLUGIN_MANUFACTURER_CODE Rera
     #PLUGIN_CODE Temp
     FORMATS Standalone #VST3

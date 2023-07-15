@@ -7,6 +7,11 @@
 class Controller;
 class Model;
 
+namespace sample {
+struct Sample;
+class SampleAudioSource;
+}  // namespace sample
+
 //==============================================================================
 class PluginProcessor : public juce::AudioProcessor {
  public:
@@ -46,10 +51,16 @@ class PluginProcessor : public juce::AudioProcessor {
   void getStateInformation(juce::MemoryBlock &destData) override;
   void setStateInformation(const void *data, int sizeInBytes) override;
 
+  //==============================================================================
+  void loadSample(const sample::Sample &sample);
+
  private:
   //==============================================================================
   std::shared_ptr<Model> model_;
   std::shared_ptr<Controller> controller_;
+
+  std::unique_ptr<sample::SampleAudioSource> source_;
+  std::unique_ptr<juce::ResamplingAudioSource> resampler_;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginProcessor)
 };

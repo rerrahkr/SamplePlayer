@@ -5,6 +5,7 @@
 #include <memory>
 
 class Model;
+class PluginProcessor;
 
 class Controller : private juce::MessageListener {
  public:
@@ -12,12 +13,13 @@ class Controller : private juce::MessageListener {
    * @brief Constructor.
    * @param[in] model Model object.
    */
-  explicit Controller(std::weak_ptr<Model> model);
+  explicit Controller(std::weak_ptr<Model> model, PluginProcessor& processor);
 
   using juce::MessageListener::postMessage;
 
  private:
   std::weak_ptr<Model> model_;
+  PluginProcessor& processor_;
 
   /**
    * @brief Handle message from the view.

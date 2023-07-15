@@ -3,6 +3,8 @@
 #include "Controller.h"
 #include "Model.h"
 #include "PluginEditor.h"
+#include "sample/Sample.h"
+#include "sample/SampleAudioSource.h"
 
 //==============================================================================
 PluginProcessor::PluginProcessor()
@@ -16,7 +18,9 @@ PluginProcessor::PluginProcessor()
 #endif
       ) {
   model_ = std::make_shared<Model>();
-  controller_ = std::make_shared<Controller>(model_);
+  controller_ = std::make_shared<Controller>(model_, *this);
+
+  source_ = std::make_unique<sample::SampleAudioSource>();
 }
 
 PluginProcessor::~PluginProcessor() {}
@@ -76,7 +80,15 @@ void PluginProcessor::changeProgramName(int index,
 void PluginProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
   // Use this method as the place to do any pre-playback
   // initialisation that you need..
-  juce::ignoreUnused(sampleRate, samplesPerBlock);
+
+  source_->prepareToPlay(samplesPerBlock, sampleRate);
+
+  resampler_ = std::make_unique<juce::ResamplingAudioSource>(
+      source_.get(), false, getMainBusNumOutputChannels());
+  double rateRatio = source_->samplingRate() / sampleRate;
+  // Through resampling process when sample is empty.
+  resampler_->setResamplingRatio(rateRatio > 0 ? rateRatio : 1.);
+  resampler_->prepareToPlay(samplesPerBlock, sampleRate);
 }
 
 void PluginProcessor::releaseResources() {
@@ -130,11 +142,18 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
   // the samples and the outer loop is handling the channels.
   // Alternatively, you can process the samples with the channels
   // interleaved by keeping the same state.
-  for (int channel = 0; channel < totalNumInputChannels; ++channel) {
+  /* for (int channel = 0; channel < totalNumInputChannels; ++channel) {
     auto* channelData = buffer.getWritePointer(channel);
     juce::ignoreUnused(channelData);
     // ..do something to the data...
+  } */
+
+  if (!resampler_) {
+    return;
   }
+
+  juce::AudioSourceChannelInfo channelInfo(buffer);
+  resampler_->getNextAudioBlock(channelInfo);
 }
 
 //==============================================================================
@@ -167,4 +186,17 @@ void PluginProcessor::setStateInformation(const void* data, int sizeInBytes) {
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
   return new PluginProcessor();
+}
+
+//==============================================================================
+void PluginProcessor::loadSample(const sample::Sample& sample) {
+  suspendProcessing(true);
+
+  source_->setSample(sample);
+  resampler_->flushBuffers();
+  const double rateRatio = source_->samplingRate() / getSampleRate();
+  // Through resampling process when sample is empty.
+  resampler_->setResamplingRatio(rateRatio > 0 ? rateRatio : 1.);
+
+  suspendProcessing(false);
 }

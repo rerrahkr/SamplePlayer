@@ -12,6 +12,8 @@ struct Sample {
   juce::Array<float> data;
   int samplingRate;
 
+  Sample() : samplingRate(0){};
+
   Sample(const juce::String& name, const juce::String& details,
          const juce::Array<float>& data, int samplingRate)
       : name(name), details(details), data(data), samplingRate(samplingRate) {}

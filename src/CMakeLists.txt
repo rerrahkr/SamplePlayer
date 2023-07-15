@@ -6,6 +6,7 @@ target_sources(${PROJECT_NAME}
         PluginProcessor.cpp
         file/P86.cpp
         sample/Sample.cpp
+        sample/SampleAudioSource.cpp
         ui/ExportSettingsView.cpp
         ui/NestableGrid.cpp
         ui/SampleListModel.cpp

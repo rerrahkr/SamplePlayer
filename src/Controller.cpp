@@ -4,7 +4,7 @@
 #include "Model.h"
 #include "PluginProcessor.h"
 
-Controller::Controller(std::weak_ptr<Model> model, PluginProcessor& processor)
+Controller::Controller(std::weak_ptr<Store> model, PluginProcessor& processor)
     : model_(std::move(model)), processor_(processor) {}
 
 void Controller::handleMessage(const juce::Message& message) {

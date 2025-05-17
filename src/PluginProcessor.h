@@ -5,7 +5,7 @@
 #include <memory>
 
 class Controller;
-class Model;
+class Store;
 
 namespace sample {
 struct Sample;
@@ -56,7 +56,7 @@ class PluginProcessor : public juce::AudioProcessor {
 
  private:
   //==============================================================================
-  std::shared_ptr<Model> model_;
+  std::shared_ptr<Store> store_;
   std::shared_ptr<Controller> controller_;
 
   std::unique_ptr<sample::SampleAudioSource> source_;

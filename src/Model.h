@@ -34,12 +34,12 @@ struct EditorState : public SampleListState {
 /**
  * @brief Model class.
  */
-class Model : public juce::ActionBroadcaster, public EditorState {
+class Store : public juce::ActionBroadcaster, public EditorState {
  public:
   /**
    * @brief Constructor.
    */
-  Model();
+  Store();
 
   /**
    * @brief List of imported sample.

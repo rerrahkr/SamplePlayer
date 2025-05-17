@@ -17,8 +17,8 @@ PluginProcessor::PluginProcessor()
               .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
       ) {
-  model_ = std::make_shared<Model>();
-  controller_ = std::make_shared<Controller>(model_, *this);
+  store_ = std::make_shared<Store>();
+  controller_ = std::make_shared<Controller>(store_, *this);
 
   source_ = std::make_unique<sample::SampleAudioSource>();
 }
@@ -162,8 +162,8 @@ bool PluginProcessor::hasEditor() const {
 }
 
 juce::AudioProcessorEditor* PluginProcessor::createEditor() {
-  auto* editor = new PluginEditor(*this, *controller_, *model_);
-  model_->addActionListener(editor);
+  auto* editor = new PluginEditor(*this, *controller_, *store_);
+  store_->addActionListener(editor);
   return editor;
 }
 
